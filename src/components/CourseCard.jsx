@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Courses } from "../utils/course";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
@@ -16,7 +16,17 @@ import "swiper/css/effect-coverflow";
 const CourseCard = () => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+  const [modal, setModal] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
+  const openModal = (course) => {
+    setSelectedCourse(course);
+    setModal(true);
+  };
+  const closeModal = () => {
+    setModal(false);
+    setSelectedCourse(null);
+  };
   return (
     <div className="relative w-full px-4 lg:px-16 mt-16">
       <Swiper
@@ -66,7 +76,10 @@ const CourseCard = () => {
       >
         {Courses.map((course) => (
           <SwiperSlide key={course.id}>
-            <div className="h-96 md:h-[400px] w-full overflow-hidden rounded-xl bg-white shadow-lg">
+            <div
+              className="h-96 md:h-[400px] w-full overflow-hidden rounded-xl bg-white shadow-lg"
+              onClick={() => openModal(course)}
+            >
               <img
                 src={course.image}
                 alt={course.name}
@@ -124,6 +137,86 @@ const CourseCard = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
       </button>
+
+      <div
+        className={`fixed inset-0 z-20 flex items-center justify-center backdrop-blur-lg overflow-y-scroll transition-opacity ${modal ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      >
+        {selectedCourse && (
+          <div className="mt-32 md:mt-0 bg-white md:rounded-lg p-6 w-full md:max-w-3xl lg:max-w-4xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-2xl font-bold mb-2">Course Enrollment</h3>
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
+              >
+                X
+              </button>
+            </div>
+            <img
+              src={selectedCourse.image}
+              alt={selectedCourse.name}
+              className="w-full h-48 lg:h-64 object-cover rounded mb-4"
+            />
+            <form>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Course Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedCourse.name}
+                    readOnly
+                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
+                  />
+                </div>
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Price
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedCourse.price}
+                    readOnly
+                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
+                  />
+                </div>
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
+                  />
+                </div>
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
+                  />
+                </div>
+              </div>
+            </form>
+            <div className="flex gap-3 mb-5 mt-5">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 border border-red-500  text-red-500 rounded cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer">
+                Enroll Now
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
