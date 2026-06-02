@@ -142,7 +142,7 @@ const CourseCard = () => {
         className={`fixed inset-0 z-20 flex items-center justify-center backdrop-blur-lg overflow-y-scroll transition-opacity ${modal ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       >
         {selectedCourse && (
-          <div className="mt-32 md:mt-0 bg-white md:rounded-lg p-6 w-full md:max-w-3xl lg:max-w-4xl">
+          <div className="mt-28 md:mt-0 bg-white md:rounded-lg p-6 w-full md:max-w-3xl lg:max-w-4xl">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold mb-2">Course Enrollment</h3>
               <button

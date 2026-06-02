@@ -1,136 +1,536 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 
-const categories = [
+const NAV_LINKS = [
   {
-    section: "Development",
-    items: [
-      { icon: "💻", label: "Web Development" },
-      { icon: "📱", label: "Mobile Development" },
-      { icon: "📊", label: "Data Science" },
-    ],
+    label: "Home",
+    href: "#home",
+    icon: (
+      <svg
+        width="20"
+        height="20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z" />
+        <path d="M9 22V12h6v10" />
+      </svg>
+    ),
   },
   {
-    section: "Business",
-    items: [
-      { icon: "📈", label: "Finance & Accounting" },
-      { icon: "💼", label: "Entrepreneurship" },
-    ],
+    label: "Courses",
+    href: "#courses",
+    icon: (
+      <svg
+        width="20"
+        height="20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M7 9h10M7 13h6" />
+      </svg>
+    ),
   },
   {
-    section: "Design",
-    items: [
-      { icon: "🎨", label: "Graphic Design" },
-      { icon: "📷", label: "Photography & Video" },
-      { icon: "🖌️", label: "UI/UX Design" },
-    ],
+    label: "Contact Us",
+    href: "#contact",
+    icon: (
+      <svg
+        width="20"
+        height="20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="M21 5H3a1 1 0 00-1 1v12a1 1 0 001 1h18a1 1 0 001-1V6a1 1 0 00-1-1z" />
+        <path d="M3 6l9 7 9-7" />
+      </svg>
+    ),
   },
 ];
 
-const languages = [
-  "🇺🇸 English",
-  "🇪🇸 Español",
-  "🇵🇹 Português",
-  "🇩🇪 Deutsch",
-  "🇫🇷 Français",
-  "🇯🇵 日本語",
-];
+const DRAWER_VARIANTS = {
+  hidden: { x: "100%", opacity: 0 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 320, damping: 32 },
+  },
+  exit: {
+    x: "100%",
+    opacity: 0,
+    transition: { duration: 0.25, ease: "easeIn" },
+  },
+};
 
-const topics = [
-  "Python",
-  "Excel",
-  "Web Development",
-  "JavaScript",
-  "Data Science",
-  "AWS Certification",
-  "Drawing",
-  "SQL",
-  "React",
-  "Machine Learning",
-  "ChatGPT",
-];
+const LINK_VARIANTS = {
+  hidden: { x: 24, opacity: 0 },
+  visible: (i) => ({
+    x: 0,
+    opacity: 1,
+    transition: {
+      delay: 0.06 + i * 0.06,
+      type: "spring",
+      stiffness: 280,
+      damping: 22,
+    },
+  }),
+};
+
+const BACKDROP_VARIANTS = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.22 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
+};
 
 export default function Navbar() {
-  const [searchQuery, setSearchQuery] = useState("React for beginners");
-  const [showCategories, setShowCategories] = useState(false);
-  const [showLanguage, setShowLanguage] = useState(false);
-  const [activeTopic, setActiveTopic] = useState("Python");
-  const [selectedLang, setSelectedLang] = useState("🇺🇸 English");
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("Home");
+  const { scrollY } = useScroll();
 
-  return (
-    <div className="font-sans w-full">
-      {/* Main Navbar */}
-      <nav className="bg-white border-b border-gray-200 px-4 h-14 flex items-center gap-2 relative z-50">
-        {/* Logo */}
-        <div className="flex-shrink-0 mr-1">
-          <svg
-            viewBox="0 0 91 34"
-            className="w-24 h-8"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M11.07 0h5.96v20.78c0 3.62-1.13 6.32-3.39 8.1C11.38 30.66 8.6 31.5 5.3 31.5 2.12 31.5 0 30.4 0 30.4l1.36-4.7s1.56.88 3.6.88c1.84 0 3.19-.47 4.04-1.42.85-.94 1.07-2.32 1.07-4.16V0z"
-              fill="#a435f0"
-            />
-            <path
-              d="M28.04 10.16h-5.72V21.8c0 1.55.23 2.65.7 3.3.47.65 1.28.98 2.44.98.82 0 1.7-.22 2.63-.65l.18 4.87c-1.37.53-2.97.8-4.79.8-2.53 0-4.44-.73-5.72-2.18-1.28-1.46-1.92-3.67-1.92-6.63V10.16H13.6V5.5h3.24V.47l5.48-1.6V5.5h5.72v4.66z"
-              fill="#1c1d1f"
-            />
-            <path
-              d="M50.08 5.5v25.5h-5.48v-3.2c-.84 1.2-1.9 2.13-3.17 2.78a8.82 8.82 0 01-4.03.95c-2.83 0-5.04-.95-6.62-2.84-1.58-1.9-2.37-4.59-2.37-8.08V5.5h5.72v14.4c0 2.07.41 3.6 1.23 4.58.82.98 2.03 1.47 3.64 1.47 1.67 0 3-.58 4-1.73 1-.15 1.5-2.65 1.5-4.82V5.5h5.58z"
-              fill="#1c1d1f"
-            />
-            <path
-              d="M73.83 18.2c0 4.05-1.08 7.22-3.25 9.5-2.17 2.28-5.11 3.43-8.84 3.43-3.72 0-6.65-1.15-8.8-3.43-2.15-2.28-3.22-5.45-3.22-9.5s1.08-7.22 3.22-9.5c2.15-2.28 5.08-3.43 8.8-3.43 3.73 0 6.67 1.15 8.84 3.43 2.17 2.28 3.25 5.45 3.25 9.5zm-5.9 0c0-2.5-.47-4.4-1.4-5.7-.94-1.3-2.32-1.95-4.14-1.95s-3.2.65-4.13 1.95c-.93 1.3-1.4 3.2-1.4 5.7s.47 4.4 1.4 5.7c.93 1.3 2.3 1.95 4.13 1.95s3.2-.65 4.14-1.95c.93-1.3 1.4-3.2 1.4-5.7z"
-              fill="#1c1d1f"
-            />
-            <path
-              d="M91 5.5l-7.1 10.24L91 31h-6.48l-4.34-7.64L75.88 31h-6.3l7.1-15.26L69.58 5.5h6.3l4.16 7.45 4.34-7.45H91z"
-              fill="#1c1d1f"
-            />
-          </svg>
-        </div>
-        <div className="flex items-center gap-4 relative flex-shrink-0 ml-auto">
-          <div className="w-px h-6 bg-gray-300" />
-          <button
-            className="flex items-center gap-1.5 px-3 py-2 border border-gray-800 rounded text-sm font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
-            onClick={() => {
-              setShowCategories(!showCategories);
-              setShowLanguage(false);
+  const navBg = useTransform(
+    scrollY,
+    [0, 60],
+    ["rgba(10,10,20,0.00)", "rgba(10,10,20,0.92)"],
+  );
+  const navBorder = useTransform(
+    scrollY,
+    [0, 60],
+    ["rgba(255,255,255,0.00)", "rgba(255,255,255,0.08)"],
+  );
+  const navBlur = useTransform(scrollY, [0, 60], [0, 14]);
+  const backdropBlur = useMotionTemplate`blur(${navBlur}px)`;
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const desktopLinks = useMemo(
+    () =>
+      NAV_LINKS.map(({ label, href }) => (
+        <a
+          key={label}
+          href={href}
+          onClick={() => setActive(label)}
+          style={{ textDecoration: "none" }}
+        >
+          <motion.span
+            whileHover={{ y: -1 }}
+            style={{
+              display: "block",
+              padding: "8px 16px",
+              borderRadius: 10,
+              fontSize: 15,
+              fontWeight: active === label ? 600 : 400,
+              color: active === label ? "#34d399" : "rgba(255,255,255,0.74)",
+              background:
+                active === label ? "rgba(52,211,153,0.10)" : "transparent",
+              border:
+                active === label
+                  ? "1px solid rgba(52,211,153,0.24)"
+                  : "1px solid transparent",
+              transition: "all 0.2s ease",
+              cursor: "pointer",
+              position: "relative",
             }}
           >
-            ☰ Categories
-          </button>
-          {showCategories && (
-            <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 shadow-lg rounded z-50 py-2">
-              {categories.map((group, gi) => (
-                <div key={gi}>
-                  {gi > 0 && <hr className="my-1.5 border-gray-100" />}
-                  <p className="px-4 py-1.5 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    {group.section}
-                  </p>
-                  {group.items.map((item, i) => (
-                    <a
-                      key={i}
-                      href="#"
-                      className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 transition-colors"
-                    >
-                      <span>{item.icon}</span> {item.label}
-                    </a>
-                  ))}
-                </div>
-              ))}
-              <hr className="my-1.5 border-gray-100" />
-              <a
-                href="#"
-                className="flex items-center gap-2.5 px-4 py-2 text-sm text-purple-700 font-semibold hover:bg-gray-50"
+            {label}
+            {active === label && (
+              <motion.div
+                layoutId="desktop-pill"
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: 10,
+                  background: "rgba(52,211,153,0.07)",
+                }}
+              />
+            )}
+          </motion.span>
+        </a>
+      )),
+    [active],
+  );
+
+  return (
+    <>
+      <style>{`
+        .desktop-nav { display: flex; align-items: center; gap: 4px; }
+        @media (max-width: 768px) {
+          .desktop-nav { display: none !important; }
+        }
+      `}</style>
+
+      <motion.header
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
+          background: navBg,
+          borderBottom: navBorder,
+          backdropFilter: backdropBlur,
+          WebkitBackdropFilter: backdropBlur,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1200,
+            margin: "0 auto",
+            padding: "0 1.5rem",
+            height: 68,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <motion.a
+            href="#"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              textDecoration: "none",
+            }}
+          >
+            <motion.div
+              whileHover={{ rotate: 15, scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                background: "linear-gradient(135deg, #34d399, #059669)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 0 18px rgba(52,211,153,0.35)",
+              }}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2.2"
               >
-                ··· Browse all categories
-              </a>
-            </div>
-          )}
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+            </motion.div>
+
+            <span
+              style={{
+                fontFamily: "system-ui, sans-serif",
+                fontWeight: 800,
+                fontSize: 20,
+                background: "linear-gradient(90deg, #f0fdf4, #86efac)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Learnify
+            </span>
+          </motion.a>
+
+          <motion.nav
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="desktop-nav"
+          >
+            {desktopLinks}
+          </motion.nav>
+
+          <motion.button
+            onClick={() => setOpen((v) => !v)}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.93 }}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 10,
+              border: "1px solid rgba(255,255,255,0.12)",
+              background: "rgba(255,255,255,0.05)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+          >
+            <HamburgerIcon open={open} />
+          </motion.button>
         </div>
-      </nav>
-    </div>
+      </motion.header>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="backdrop"
+            variants={BACKDROP_VARIANTS}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            onClick={() => setOpen(false)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 110,
+              background: "rgba(0,0,0,0.55)",
+              backdropFilter: "blur(3px)",
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {open && (
+          <motion.aside
+            key="drawer"
+            variants={DRAWER_VARIANTS}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={{
+              position: "fixed",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: "min(340px, 88vw)",
+              zIndex: 120,
+              background: "linear-gradient(160deg, #0c1a26 0%, #0a0f1a 100%)",
+              borderLeft: "1px solid rgba(255,255,255,0.08)",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                padding: "1.25rem 1.5rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                borderBottom: "1px solid rgba(255,255,255,0.07)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 7,
+                    background: "linear-gradient(135deg, #34d399, #059669)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 0 12px rgba(52,211,153,0.4)",
+                  }}
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2.2"
+                  >
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                  </svg>
+                </div>
+                <span
+                  style={{
+                    fontFamily: "system-ui, sans-serif",
+                    fontWeight: 800,
+                    fontSize: 17,
+                    background: "linear-gradient(90deg, #f0fdf4, #86efac)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  Learnify
+                </span>
+              </div>
+
+              <motion.button
+                onClick={() => setOpen(false)}
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                aria-label="Close menu"
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "rgba(255,255,255,0.05)",
+                  color: "rgba(255,255,255,0.6)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                >
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </motion.button>
+            </div>
+
+            <nav style={{ padding: "1.25rem 1rem", flex: 1 }}>
+              <p
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.28)",
+                  padding: "0 0.75rem",
+                  marginBottom: 8,
+                }}
+              >
+                Navigation
+              </p>
+
+              {NAV_LINKS.map(({ label, href, icon }, i) => (
+                <motion.a
+                  key={label}
+                  href={href}
+                  custom={i}
+                  variants={LINK_VARIANTS}
+                  initial="hidden"
+                  animate="visible"
+                  onClick={() => {
+                    setActive(label);
+                    setOpen(false);
+                  }}
+                  whileHover={{ x: 4 }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 14,
+                    padding: "13px 14px",
+                    borderRadius: 10,
+                    marginBottom: 4,
+                    textDecoration: "none",
+                    color:
+                      active === label ? "#34d399" : "rgba(255,255,255,0.7)",
+                    background:
+                      active === label ? "rgba(52,211,153,0.1)" : "transparent",
+                    border:
+                      active === label
+                        ? "1px solid rgba(52,211,153,0.2)"
+                        : "1px solid transparent",
+                    transition: "background 0.2s, border 0.2s, color 0.2s",
+                    cursor: "pointer",
+                  }}
+                >
+                  <span style={{ opacity: active === label ? 1 : 0.5 }}>
+                    {icon}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 16,
+                      fontWeight: active === label ? 600 : 400,
+                    }}
+                  >
+                    {label}
+                  </span>
+                  {active === label && (
+                    <motion.span
+                      layoutId="drawer-dot"
+                      style={{
+                        marginLeft: "auto",
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        background: "#34d399",
+                        boxShadow: "0 0 8px rgba(52,211,153,0.7)",
+                      }}
+                    />
+                  )}
+                </motion.a>
+              ))}
+            </nav>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+function HamburgerIcon({ open }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <motion.line
+        x1="3"
+        y1="6"
+        x2="21"
+        y2="6"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        animate={
+          open ? { rotate: 45, y: 6, x2: 18 } : { rotate: 0, y: 0, x2: 21 }
+        }
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        style={{ transformOrigin: "12px 6px" }}
+      />
+      <motion.line
+        x1="3"
+        y1="12"
+        x2="21"
+        y2="12"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+        transition={{ duration: 0.2 }}
+        style={{ transformOrigin: "12px 12px" }}
+      />
+      <motion.line
+        x1="3"
+        y1="18"
+        x2="21"
+        y2="18"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        animate={
+          open ? { rotate: -45, y: -6, x2: 18 } : { rotate: 0, y: 0, x2: 21 }
+        }
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        style={{ transformOrigin: "12px 18px" }}
+      />
+    </svg>
   );
 }
