@@ -142,7 +142,7 @@ const CourseCard = () => {
         className={`fixed inset-0 z-20 flex items-center justify-center backdrop-blur-lg overflow-y-scroll transition-opacity ${modal ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       >
         {selectedCourse && (
-          <div className="mt-28 md:mt-0 bg-white md:rounded-lg p-6 w-full md:max-w-3xl lg:max-w-4xl">
+          <div className="mt-28 md:mt-16 bg-white md:rounded-lg p-6 w-full md:max-w-3xl lg:max-w-4xl">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold mb-2">Course Enrollment</h3>
               <button
@@ -183,23 +183,47 @@ const CourseCard = () => {
                 </div>
                 <div className="">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    First Name
+                    Student Call No.
                   </label>
                   <input
                     type="text"
-                    name="firstName"
+                    placeholder="e.g. +233 XXX XXX XXX"
+                    name="studentCallNo"
                     className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
                   />
                 </div>
                 <div className="">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Last Name
+                    Student Whatsapp No.
                   </label>
                   <input
                     type="text"
-                    name="lastName"
+                    name="studentWhatsappNo"
+                    placeholder="e.g. +233 XXX XXX XXX"
                     className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
                   />
+                </div>
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Your Class
+                  </label>
+                  <input
+                    type="text"
+                    name="studentClass"
+                    placeholder="e.g. Level 200"
+                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
+                  />
+                </div>
+                <div className="">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    What are you in for?
+                  </label>
+                  <select className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full">
+                    <option value="">Select an option</option>
+                    <option value="enroll">Course Teaching Tutorial</option>
+                    <option value="inquire">One-to-One Course Tutorial</option>
+                    <option value="inquire">Resit Tutorials</option>
+                  </select>
                 </div>
               </div>
             </form>
