@@ -99,13 +99,13 @@ export default function Carousel({
               className={`absolute inset-0 bg-gradient-to-br ${slide.accent}`}
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.08),transparent_30%)]" />
-              <div className="relative grid h-full items-center gap-8 px-6 py-8 sm:px-10 md:grid-cols-2 md:px-12 lg:px-16">
-                <div className="order-2 md:order-1">
+              <div className="relative grid h-full items-center gap-8 px-6 py-8 sm:px-10 grid-cols-1 ">
+                <div className="flex flex-col justify-center items-center order-2 md:order-1 md:px-12 lg:px-16">
                   <motion.h2
                     initial={reduceMotion ? false : { opacity: 0, y: 18 }}
                     animate={reduceMotion ? false : { opacity: 1, y: 0 }}
                     transition={{ delay: 0.12, duration: 0.45 }}
-                    className="mt-4 max-w-xl text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl"
+                    className="mt-4 max-4xl uppercase text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl"
                   >
                     {slide.title}
                   </motion.h2>
@@ -114,89 +114,18 @@ export default function Carousel({
                     initial={reduceMotion ? false : { opacity: 0, y: 18 }}
                     animate={reduceMotion ? false : { opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.45 }}
-                    className="mt-4 max-w-xl text-base leading-7 text-white/75 sm:text-lg"
+                    className="mt-4 max-xl text-center text-base leading-7 text-white/75 sm:text-lg"
                   >
                     {slide.subtitle}
                   </motion.p>
-
-                  <motion.div
-                    initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-                    animate={reduceMotion ? false : { opacity: 1, y: 0 }}
-                    transition={{ delay: 0.28, duration: 0.45 }}
-                    className="mt-8 flex flex-wrap items-center gap-3"
-                  >
-                    <button
-                      type="button"
-                      onClick={prevSlide}
-                      className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur transition hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/40"
-                      aria-label="Previous slide"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      Previous
-                    </button>
-                    <button
-                      type="button"
-                      onClick={nextSlide}
-                      className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-black/10 transition hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-white/40"
-                      aria-label="Next slide"
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </motion.div>
                 </div>
 
-                <motion.div
-                  initial={
-                    reduceMotion ? false : { opacity: 0, scale: 0.92, y: 18 }
-                  }
-                  animate={
-                    reduceMotion ? false : { opacity: 1, scale: 1, y: 0 }
-                  }
-                  transition={{ delay: 0.16, duration: 0.55 }}
-                  className="order-1 md:order-2"
-                >
-                  <div className="relative mx-auto max-w-md rounded-[1.75rem] border border-white/10 bg-white/10 p-4 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-5">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/70">
-                          Performance
-                        </p>
-                        <p className="mt-1 text-2xl font-semibold text-white">
-                          {slide.stat}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-medium text-emerald-200">
-                        <Star className="h-3.5 w-3.5 fill-current" />
-                        Live
-                      </div>
-                    </div>
-
-                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
-                        <div className="h-2 w-20 rounded-full bg-white/20" />
-                        <div className="mt-4 h-28 rounded-2xl bg-gradient-to-br from-white/15 to-white/5" />
-                      </div>
-                      <div className="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="h-2 w-14 rounded-full bg-white/20" />
-                          <div className="h-2 w-8 rounded-full bg-white/15" />
-                        </div>
-                        <div className="mt-4 space-y-3">
-                          <div className="h-3 w-full rounded-full bg-white/10" />
-                          <div className="h-3 w-5/6 rounded-full bg-white/10" />
-                          <div className="h-3 w-2/3 rounded-full bg-white/10" />
-                        </div>
-                        <div className="mt-5 h-20 rounded-2xl bg-white/10" />
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                
               </div>
             </motion.div>
           </AnimatePresence>
 
-          <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-between gap-4 px-4 py-4 sm:px-6 md:px-12 lg:px-16 mb-10">
             <div className="flex items-center gap-2 rounded-full border border-white/10 bg-slate-950/40 px-3 py-2 backdrop-blur">
               {safeSlides.map((item, index) => (
                 <button

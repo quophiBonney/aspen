@@ -77,7 +77,7 @@ const CourseCard = () => {
         {Courses.map((course) => (
           <SwiperSlide key={course.id}>
             <div
-              className="h-96 md:h-[400px] w-full overflow-hidden rounded-xl bg-white shadow-lg"
+              className="h-96 md:h-[450px] w-full overflow-hidden rounded-xl bg-white shadow-lg mb-10"
               onClick={() => openModal(course)}
             >
               <img
