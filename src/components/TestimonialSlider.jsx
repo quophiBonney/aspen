@@ -85,7 +85,7 @@ export default function TestimonialSlider() {
         >
           {testimonials.map((testimonial) => (
             <SwiperSlide key={testimonial.id}>
-              <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full px-10 mb-16">
+              <div className="bg-white rounded-lg p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full px-10 mb-16">
                 <div className="flex items-center gap-4 mb-6">
                   <img
                     src={testimonial.image}
