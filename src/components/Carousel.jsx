@@ -105,7 +105,7 @@ export default function Carousel({
                     initial={reduceMotion ? false : { opacity: 0, y: 18 }}
                     animate={reduceMotion ? false : { opacity: 1, y: 0 }}
                     transition={{ delay: 0.12, duration: 0.45 }}
-                    className="mt-4 max-4xl uppercase text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl"
+                    className="mt-4 max-4xl uppercase text-xl text-center lg:text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl"
                   >
                     {slide.title}
                   </motion.h2>

@@ -4,7 +4,7 @@ import logo from "../assets/logo.jpg";
 const Footer = () => {
   return (
     <footer className=" bg-slate-700 px-4 sm:px-6 lg:px-8">
-    <div className="mt-16 grid grid-cols-2 lg:grid-cols-3 gap-6 p-16">
+    <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 lg:p-16">
       <div>
         <img src={logo} alt="UMAT Logo" className="h-8" />
         <p className="text-base text-gray-300 mt-2">
