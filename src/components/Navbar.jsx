@@ -147,7 +147,7 @@ export default function Navbar({ links = DEFAULT_LINKS }) {
     <>
       <header
         ref={navRef}
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 bg-white ${
           scrolled
             ? "border-b border-gray-200/70 bg-white/90 shadow-sm backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"
@@ -155,7 +155,7 @@ export default function Navbar({ links = DEFAULT_LINKS }) {
         role="banner"
       >
         <div className="mx-auto max-w-8xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex min-h-[72px] items-center justify-between gap-6">
+          <div className="flex min-h-[10px] items-center justify-between gap-6">
             <Logo />
 
             <div className="flex items-center gap-4">
@@ -195,7 +195,7 @@ export default function Navbar({ links = DEFAULT_LINKS }) {
         </div>
       </header>
 
-      <div className="h-[104px]" aria-hidden="true" />
+      <div className="h-[90x]" aria-hidden="true" />
     </>
   );
 }
