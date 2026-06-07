@@ -155,7 +155,7 @@ export default function Navbar({ links = DEFAULT_LINKS }) {
         role="banner"
       >
         <div className="mx-auto max-w-8xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex min-h-[10px] items-center justify-between gap-6">
+          <div className="flex min-h-[10px] items-center justify-between gap-2">
             <Logo />
 
             <div className="flex items-center gap-4">
