@@ -1,39 +1,179 @@
-import React, { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Courses } from "../utils/course";
 import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  EffectCoverflow,
-  Navigation,
-  Autoplay,
-  Pagination,
-} from "swiper/modules";
+import { EffectCoverflow, Navigation, Autoplay, Pagination } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-coverflow";
 
-const CourseCard = () => {
+function CourseModal({ course, onClose }) {
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-black/50 px-4 py-6 backdrop-blur-sm sm:px-6 lg:px-8"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        ref={modalRef}
+        className="mt-8 w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="course-modal-title"
+      >
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-5 py-4 sm:px-6">
+          <div>
+            <h3 id="course-modal-title" className="text-xl font-bold text-gray-900">
+              Course Enrollment
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Fill in your details to enroll in this course.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+            aria-label="Close modal"
+          >
+            <span className="text-lg font-semibold">×</span>
+          </button>
+        </div>
+
+        <div className="max-h-[calc(100vh-140px)] overflow-y-auto px-5 py-5 sm:px-6">
+          <img
+            src={course.image}
+            alt={course.name}
+            className="h-52 w-full rounded-2xl object-cover sm:h-64"
+          />
+
+          <form className="mt-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Field label="Course Name">
+                <input
+                  type="text"
+                  value={course.name}
+                  readOnly
+                  className="w-full rounded-xl border border-gray-300 bg-gray-100 px-4 py-3 text-gray-800 outline-none"
+                />
+              </Field>
+
+              <Field label="Price">
+                <input
+                  type="text"
+                  value={`GHS ${course.price}`}
+                  readOnly
+                  className="w-full rounded-xl border border-gray-300 bg-gray-100 px-4 py-3 text-gray-800 outline-none"
+                />
+              </Field>
+
+              <Field label="Student Call No.">
+                <input
+                  type="tel"
+                  name="studentCallNo"
+                  placeholder="e.g. +233 XXX XXX XXX"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-800 outline-none focus:border-violet-500"
+                />
+              </Field>
+
+              <Field label="Student WhatsApp No.">
+                <input
+                  type="tel"
+                  name="studentWhatsappNo"
+                  placeholder="e.g. +233 XXX XXX XXX"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-800 outline-none focus:border-violet-500"
+                />
+              </Field>
+
+              <Field label="Your Class">
+                <input
+                  type="text"
+                  name="studentClass"
+                  placeholder="e.g. Level 200"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-800 outline-none focus:border-violet-500"
+                />
+              </Field>
+
+              <Field label="What are you in for?">
+                <select className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-800 outline-none focus:border-violet-500">
+                  <option value="">Select an option</option>
+                  <option value="enroll">Course Teaching Tutorial</option>
+                  <option value="one-to-one">One-to-One Course Tutorial</option>
+                  <option value="resit">Resit Tutorials</option>
+                </select>
+              </Field>
+            </div>
+          </form>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-xl border border-red-500 px-5 py-3 font-medium text-red-600 transition hover:bg-red-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="rounded-xl bg-green-600 px-5 py-3 font-medium text-white transition hover:bg-green-700"
+            >
+              Enroll Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+export default function CourseCard() {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
-  const [modal, setModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
-  const openModal = (course) => {
-    setSelectedCourse(course);
-    setModal(true);
-  };
-  const closeModal = () => {
-    setModal(false);
-    setSelectedCourse(null);
-  };
   return (
-    <div className="relative w-full px-4 lg:px-16 mt-16">
+    <div className="relative mt-16 w-full px-4 lg:px-16">
       <Swiper
         effect="coverflow"
-        grabCursor={true}
-        centeredSlides={true}
-        loop={true}
+        grabCursor
+        centeredSlides
+        loop
         autoplay={{
           delay: 3000,
           disableOnInteraction: false,
@@ -47,22 +187,11 @@ const CourseCard = () => {
           slideShadows: true,
         }}
         breakpoints={{
-          320: {
-            slidesPerView: 1,
-            spaceBetween: 12,
-          },
-          768: {
-            slidesPerView: 2,
-            spaceBetween: 16,
-          },
-          1024: {
-            slidesPerView: 3,
-            spaceBetween: 20,
-          },
+          320: { slidesPerView: 1, spaceBetween: 12 },
+          768: { slidesPerView: 2, spaceBetween: 16 },
+          1024: { slidesPerView: 3, spaceBetween: 20 },
         }}
-        pagination={{
-          clickable: true,
-        }}
+        pagination={{ clickable: true }}
         navigation={{
           prevEl: prevRef.current,
           nextEl: nextRef.current,
@@ -76,9 +205,10 @@ const CourseCard = () => {
       >
         {Courses.map((course) => (
           <SwiperSlide key={course.id}>
-            <div
-              className="h-96 md:h-[450px] w-full overflow-hidden rounded-xl bg-white shadow-lg mb-10"
-              onClick={() => openModal(course)}
+            <button
+              type="button"
+              onClick={() => setSelectedCourse(course)}
+              className="mb-10 h-96 w-full overflow-hidden rounded-2xl bg-white text-left shadow-lg transition hover:-translate-y-1 hover:shadow-xl md:h-[450px]"
             >
               <img
                 src={course.image}
@@ -87,7 +217,9 @@ const CourseCard = () => {
                 loading="lazy"
               />
               <div className="p-4">
-                <h3 className="text-lg font-semibold">{course.name}</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {course.name}
+                </h3>
                 <p className="mt-2 text-sm text-gray-600">
                   {course.description}
                 </p>
@@ -95,14 +227,15 @@ const CourseCard = () => {
                   GHS {course.price}
                 </p>
               </div>
-            </div>
+            </button>
           </SwiperSlide>
         ))}
       </Swiper>
 
       <button
         ref={prevRef}
-        className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-3 shadow-md hover:bg-gray-100"
+        type="button"
+        className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-3 shadow-md transition hover:bg-gray-100"
         aria-label="Previous slide"
       >
         <svg
@@ -113,17 +246,14 @@ const CourseCard = () => {
           stroke="currentColor"
           strokeWidth="2"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 19l-7-7 7-7"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
       <button
         ref={nextRef}
-        className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-3 shadow-md hover:bg-gray-100"
+        type="button"
+        className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-3 shadow-md transition hover:bg-gray-100"
         aria-label="Next slide"
       >
         <svg
@@ -138,111 +268,12 @@ const CourseCard = () => {
         </svg>
       </button>
 
-      <div
-        className={`fixed inset-0 z-20 flex items-center justify-center backdrop-blur-lg overflow-y-scroll transition-opacity ${modal ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-      >
-        {selectedCourse && (
-          <div className="mt-28 md:mt-16 bg-white md:rounded-lg p-6 w-full md:max-w-3xl lg:max-w-4xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-2xl font-bold mb-2">Course Enrollment</h3>
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
-              >
-                X
-              </button>
-            </div>
-            <img
-              src={selectedCourse.image}
-              alt={selectedCourse.name}
-              className="w-full h-48 lg:h-64 object-cover rounded mb-4"
-            />
-            <form>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Course Name
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedCourse.name}
-                    readOnly
-                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
-                  />
-                </div>
-                <div className="">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Price
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedCourse.price}
-                    readOnly
-                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
-                  />
-                </div>
-                <div className="">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Student Call No.
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. +233 XXX XXX XXX"
-                    name="studentCallNo"
-                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
-                  />
-                </div>
-                <div className="">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Student Whatsapp No.
-                  </label>
-                  <input
-                    type="text"
-                    name="studentWhatsappNo"
-                    placeholder="e.g. +233 XXX XXX XXX"
-                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
-                  />
-                </div>
-                <div className="">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Your Class
-                  </label>
-                  <input
-                    type="text"
-                    name="studentClass"
-                    placeholder="e.g. Level 200"
-                    className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full"
-                  />
-                </div>
-                <div className="">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    What are you in for?
-                  </label>
-                  <select className="bg-gray-100 text-gray-800 border border-gray-300 rounded px-3 py-2 mb-4 w-full">
-                    <option value="">Select an option</option>
-                    <option value="enroll">Course Teaching Tutorial</option>
-                    <option value="inquire">One-to-One Course Tutorial</option>
-                    <option value="inquire">Resit Tutorials</option>
-                  </select>
-                </div>
-              </div>
-            </form>
-            <div className="flex gap-3 mb-5 mt-5">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 border border-red-500  text-red-500 rounded cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer">
-                Enroll Now
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      {selectedCourse && (
+        <CourseModal
+          course={selectedCourse}
+          onClose={() => setSelectedCourse(null)}
+        />
+      )}
     </div>
   );
-};
-
-export default CourseCard;
+}

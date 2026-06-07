@@ -7,23 +7,23 @@ const demoSlides = [
     id: 1,
     title: "Aspen HYSYS: Powering the Future of Process Simulation",
     subtitle:
-      "Aspen HYSYS is a leading process simulation tool used in chemical and petroleum engineering to model, design, and optimize industrial processes. It enables engineers to visualize complex systems, test scenarios safely, and improve efficiency before real-world implementation.",
+      "Aspen HYSYS is a leading process simulation tool used in chemical and petroleum engineering to model, design, and optimize industrial processes. ",
     stat: "4.9/5 satisfaction",
-    accent: "from-slate-900 via-slate-800 to-slate-700",
+    accent: "from-emerald-900 via-slate-800 to-slate-900",
   },
   {
     id: 2,
     title: "Mastering Chemical Engineering Design with Aspen HYSYS",
     subtitle:
-      "Aspen HYSYS provides a powerful environment for simulating steady-state and dynamic processes in oil & gas and chemical plants. From distillation columns to heat exchangers, it helps engineers design smarter systems, reduce costs, and increase operational reliability.",
+      "Aspen HYSYS provides a powerful environment for simulating steady-state and dynamic processes in oil & gas and chemical plants.",
     stat: "100% fluid layout",
-    accent: "from-indigo-900 via-indigo-800 to-slate-900",
+    accent: "from-emerald-900 via-slate-800 to-slate-900",
   },
   {
     id: 3,
     title: "Aspen HYSYS: Where Engineering Meets Intelligent Simulation",
     subtitle:
-      "With advanced thermodynamic modeling and intuitive workflows, Aspen HYSYS allows engineers to predict real plant behavior with high accuracy. It bridges theory and practice, making it essential for process optimization, safety analysis, and performance improvement in modern industries.",
+      "With advanced thermodynamic modeling and intuitive workflows, Aspen HYSYS allows engineers to predict real plant behavior with high accuracy.",
     stat: "Smooth swipe enabled",
     accent: "from-emerald-900 via-slate-800 to-slate-900",
   },
@@ -99,13 +99,13 @@ export default function Carousel({
               className={`absolute inset-0 bg-gradient-to-br ${slide.accent}`}
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.08),transparent_30%)]" />
-              <div className="relative grid h-full items-center gap-8 px-6 py-8 sm:px-10 grid-cols-1 ">
+              <div className="relative grid h-full items-center gap-8 px-2 py-8 sm:px-10 grid-cols-1">
                 <div className="flex flex-col justify-center items-center order-2 md:order-1 md:px-12 lg:px-16">
                   <motion.h2
                     initial={reduceMotion ? false : { opacity: 0, y: 18 }}
                     animate={reduceMotion ? false : { opacity: 1, y: 0 }}
                     transition={{ delay: 0.12, duration: 0.45 }}
-                    className="mt-4 max-4xl uppercase text-xl text-center lg:text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl"
+                    className="max-4xl uppercase text-xl text-center lg:text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl"
                   >
                     {slide.title}
                   </motion.h2>
